@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3-Tier Docker App</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      text-align: center;
+      background: #1e293b;
+      padding: 3rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      max-width: 500px;
+      width: 90%;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #38bdf8;
+    }
+    p.sub { color: #94a3b8; margin-bottom: 2rem; font-size: 0.95rem; }
+    .btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #0f172a;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      min-height: 50px;
+      text-align: left;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .healthy { color: #4ade80; }
+    .unhealthy { color: #f87171; }
+    .loading { color: #facc15; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>&#128640; 3-Tier Docker App</h1>
+    <p class="sub">Nginx &rarr; Node.js API &rarr; MySQL</p>
+    <button class="btn" onclick="checkHealth()">Check API Health</button>
+    <div class="result" id="result">Click the button to check backend + database health.</div>
+  </div>
+  <script>
+    async function checkHealth() {
+      const el = document.getElementById('result');
+      el.textContent = 'Loading...';
+      el.className = 'result loading';
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        el.textContent = JSON.stringify(data, null, 2);
+        el.className = res.ok ? 'result healthy' : 'result unhealthy';
+      } catch (err) {
+        el.textContent = 'Error: ' + err.message;
+        el.className = 'result unhealthy';
+      }
+    }
+  </script>
+</body>
+</html>
